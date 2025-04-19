@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - Movie Trivia</title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+    <link href="/css/fontawesome.css" rel="stylesheet">
+    <style>
+        .theater-bg {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%);
+        }
+        .theater-card {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+        .theater-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+        .theater-button:hover {
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen">
+    <!-- Theater-style Hero Section -->
+    <div class="relative min-h-screen">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+                 class="w-full h-full object-cover" alt="Theater Background">
+            <div class="absolute inset-0 theater-bg"></div>
+        </div>
+
+        <!-- Theater Logo -->
+        <div class="absolute top-4 left-4">
+            <h1 class="text-4xl font-bold text-yellow-400">
+                🎬 MOVIE TRIVIA
+            </h1>
+        </div>
+
+        <div class="relative z-10 flex items-center justify-center min-h-screen">
+            <!-- Error Card -->
+            <div class="theater-card rounded-lg p-8 max-w-2xl w-full mx-4">
+                <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center"><%= error %></h2>
+                <p class="text-gray-300 mb-8 text-center"><%= message %></p>
+                
+                <div class="flex justify-center">
+                    <a href="/" 
+                        class="theater-button px-6 py-3 text-lg font-bold rounded-lg transition-all duration-300">
+                        Return to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

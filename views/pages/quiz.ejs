@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Movie Trivia - Question <%= currentQuestion + 1 %></title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+    <link href="/css/fontawesome.css" rel="stylesheet">
+    <style>
+        .theater-bg {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%);
+        }
+        .theater-card {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+        .theater-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+        .theater-button:hover {
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+        .option-card {
+            transition: all 0.3s ease;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            border-color: #FFD700;
+            box-shadow: 0 0 15px rgba(255,215,0,0.3);
+        }
+        .option-card.selected {
+            border-color: #FFD700;
+            background-color: rgba(255,215,0,0.1);
+        }
+        .progress-fill {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            height: 100%;
+            border-radius: 9999px;
+            transition: width 0.5s ease;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .theater-card {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            .option-card {
+                padding: 0.75rem;
+            }
+            .theater-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            .flex {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .theater-card {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.25rem;
+            }
+            h2 {
+                font-size: 1rem;
+            }
+            .option-card {
+                padding: 0.5rem;
+            }
+            .theater-button {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+            .space-y-4 {
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen">
+    <!-- Theater-style Hero Section -->
+    <div class="relative min-h-screen">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+                 class="w-full h-full object-cover" alt="Theater Background">
+            <div class="absolute inset-0 theater-bg"></div>
+        </div>
+
+        <!-- Theater Logo -->
+        <div class="absolute top-4 left-4">
+            <h1 class="text-4xl font-bold text-yellow-400">
+                🎬 MOVIE TRIVIA
+            </h1>
+        </div>
+
+        <div class="relative z-10 flex items-center justify-center min-h-screen">
+            <!-- Main Quiz Card -->
+            <div class="theater-card rounded-lg p-8 max-w-2xl w-full mx-4">
+                <!-- Progress Bar -->
+                <div class="mb-8">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-lg font-medium text-yellow-400">
+                            Question <%= currentQuestion + 1 %> of <%= totalQuestions %>
+                        </span>
+                        <span class="text-lg font-medium text-yellow-400">
+                            <%= Math.round((currentQuestion + 1) / totalQuestions * 100) %>%
+                        </span>
+                    </div>
+                    <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="progress-fill" data-width="<%= (currentQuestion + 1) / totalQuestions * 100 %>"></div>
+                    </div>
+                </div>
+
+                <!-- Question -->
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-yellow-400 mb-6">
+                        <%= question.question %>
+                    </h2>
+                    
+                    <form action="/submit-answer" method="POST" class="space-y-4">
+                        <% question.options.forEach((option, index) => { %>
+                            <div class="option-card rounded-lg p-4 cursor-pointer">
+                                <label class="flex items-center space-x-4 cursor-pointer">
+                                    <input type="radio" name="answer" value="<%= option %>" required
+                                        class="hidden peer">
+                                    <div class="w-6 h-6 rounded-full border-2 border-yellow-400 peer-checked:border-yellow-400 peer-checked:bg-yellow-400 flex items-center justify-center">
+                                        <div class="w-3 h-3 rounded-full bg-black hidden peer-checked:block"></div>
+                                    </div>
+                                    <span class="text-lg text-white"><%= option %></span>
+                                </label>
+                            </div>
+                        <% }); %>
+
+                        <div class="flex justify-between mt-8">
+                            <% if (currentQuestion > 0) { %>
+                                <button type="button" onclick="window.history.back()"
+                                    class="theater-button px-6 py-3 text-lg font-bold rounded-lg transition-all duration-300 flex items-center space-x-2">
+                                    <span>← Previous</span>
+                                </button>
+                            <% } else { %>
+                                <div></div>
+                            <% } %>
+                            
+                            <button type="submit"
+                                class="theater-button px-6 py-3 text-lg font-bold rounded-lg transition-all duration-300 flex items-center space-x-2">
+                                <span><%= currentQuestion === totalQuestions - 1 ? 'Submit Quiz' : 'Next' %></span>
+                                <span class="text-xl"><%= currentQuestion === totalQuestions - 1 ? '🎬' : '→' %></span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add hover effects to option cards
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards
+                document.querySelectorAll('.option-card').forEach(c => {
+                    c.classList.remove('selected');
+                });
+                // Add selected class to clicked card
+                this.classList.add('selected');
+                // Check the radio input
+                this.querySelector('input[type="radio"]').checked = true;
+            });
+        });
+
+        // Set progress bar width
+        const progressFill = document.querySelector('.progress-fill');
+        if (progressFill) {
+            const width = progressFill.getAttribute('data-width');
+            progressFill.style.width = width + '%';
+        }
+
+        // Add loading effect on form submit
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            button.innerHTML = '<span>Loading...</span><span class="text-xl">✨</span>';
+            button.disabled = true;
+        });
+    </script>
+</body>
+</html> 

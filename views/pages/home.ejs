@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Movie Trivia</title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+    <link href="/css/fontawesome.css" rel="stylesheet">
+    <style>
+        .theater-bg {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%);
+        }
+        .theater-card {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+        .theater-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+        .theater-button:hover {
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+        .theater-input {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,215,0,0.2);
+            color: white;
+        }
+        .theater-input:focus {
+            border-color: #FFD700;
+            box-shadow: 0 0 0 2px rgba(255,215,0,0.2);
+        }
+        .welcome-message {
+            animation: fadeIn 1s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .theater-card {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            .theater-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+            .theater-input {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .theater-card {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.25rem;
+            }
+            h2 {
+                font-size: 1rem;
+            }
+            .flex {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .theater-button {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen">
+    <!-- Theater-style Hero Section -->
+    <div class="relative min-h-screen">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+                 class="w-full h-full object-cover" alt="Theater Background">
+            <div class="absolute inset-0 theater-bg"></div>
+        </div>
+
+        <!-- Theater Logo -->
+        <div class="absolute top-4 left-4">
+            <h1 class="text-4xl font-bold text-yellow-400">
+                🎬 MOVIE TRIVIA
+            </h1>
+        </div>
+
+        <div class="relative z-10 flex items-center justify-center min-h-screen">
+            <!-- Main Quiz Card -->
+            <div class="theater-card rounded-lg p-8 max-w-2xl w-full mx-4">
+                <% if (!participantName) { %>
+                    <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Welcome to Movie Trivia!</h2>
+                    <p class="text-gray-300 mb-8 text-center">Please enter your name to start the quiz</p>
+                    
+                    <form action="/start-quiz" method="POST" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">
+                                Your Name
+                            </label>
+                            <input type="text" id="name" name="name" required
+                                class="theater-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                placeholder="Enter your name">
+                        </div>
+
+                        <button type="submit"
+                            class="theater-button w-full py-3 px-6 text-lg font-bold rounded-lg transition-all duration-300">
+                            Continue
+                        </button>
+                    </form>
+                <% } else { %>
+                    <div class="welcome-message">
+                        <h2 class="text-3xl font-bold text-yellow-400 mb-6 text-center">Welcome, <%= participantName %>!</h2>
+                        <p class="text-gray-300 mb-8 text-center">Ready to test your movie knowledge?</p>
+                    </div>
+                    
+                    <div class="flex flex-col space-y-4">
+                        <form action="/create-quiz" method="POST" class="space-y-6">
+                            <input type="hidden" name="name" value="<%= participantName %>">
+                            <div>
+                                <label for="topic" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Movie Topic
+                                </label>
+                                <input type="text" id="topic" name="topic" required
+                                    class="theater-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                    placeholder="Enter a movie name, actor, or topic">
+                            </div>
+                            
+                            <div>
+                                <label for="difficulty" class="block text-sm font-medium text-gray-300 mb-2">
+                                    Difficulty Level
+                                </label>
+                                <select id="difficulty" name="difficulty" required
+                                    class="theater-input w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400">
+                                    <option value="easy">Easy</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="hard">Hard</option>
+                                </select>
+                            </div>
+
+                            <button type="submit"
+                                class="theater-button w-full py-3 px-6 text-lg font-bold rounded-lg transition-all duration-300">
+                                Start Quiz
+                            </button>
+                        </form>
+
+                        <% if (fromHistory) { %>
+                            <div class="flex justify-center mt-4">
+                                <form action="/new-participant" method="POST" class="w-full">
+                                    <button type="submit"
+                                        class="theater-button w-full py-3 px-6 text-lg font-bold rounded-lg transition-all duration-300 bg-gray-700 hover:bg-gray-600">
+                                        New Participant
+                                    </button>
+                                </form>
+                            </div>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

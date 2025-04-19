@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Movie Trivia - Score</title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+    <link href="/css/fontawesome.css" rel="stylesheet">
+    <style>
+        .theater-bg {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, rgba(0,0,0,0.9) 100%);
+        }
+        .theater-card {
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,215,0,0.2);
+            box-shadow: 0 0 20px rgba(255,215,0,0.1);
+        }
+        .theater-button {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: none;
+            box-shadow: 0 0 10px rgba(255,215,0,0.3);
+        }
+        .theater-button:hover {
+            background: linear-gradient(45deg, #FFA500, #FFD700);
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+        }
+        .star-rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .star {
+            color: #FFD700;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px rgba(255,215,0,0.5);
+        }
+        .star.empty {
+            color: #4B5563;
+        }
+        .answer-correct {
+            border-left: 4px solid #4CAF50;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        .answer-wrong {
+            border-left: 4px solid #F44336;
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .theater-card {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            h2 {
+                font-size: 1.25rem;
+            }
+            .star {
+                font-size: 1.25rem;
+            }
+            .theater-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .theater-card {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            h1 {
+                font-size: 1.25rem;
+            }
+            h2 {
+                font-size: 1rem;
+            }
+            .star {
+                font-size: 1rem;
+            }
+            .theater-button {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black min-h-screen">
+    <!-- Theater-style Hero Section -->
+    <div class="relative min-h-screen">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0">
+            <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+                 class="w-full h-full object-cover" alt="Theater Background">
+            <div class="absolute inset-0 theater-bg"></div>
+        </div>
+
+        <!-- Theater Logo -->
+        <div class="absolute top-4 left-4">
+            <h1 class="text-4xl font-bold text-yellow-400">
+                🎬 MOVIE TRIVIA
+            </h1>
+        </div>
+
+        <div class="relative z-10 flex items-center justify-center min-h-screen">
+            <!-- Main Score Card -->
+            <div class="theater-card rounded-lg p-8 max-w-2xl w-full mx-4">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-yellow-400 mb-4">Quiz Results</h2>
+                    <p class="text-gray-300 mb-2">Topic: <%= quiz.topic %> (<%= quiz.difficulty %>)</p>
+                    <p class="text-gray-300">Participant: <%= quiz.participantName %></p>
+                </div>
+
+                <div class="text-center mb-8">
+                    <div class="text-5xl font-bold text-yellow-400 mb-4">
+                        <%= score %>/<%= totalQuestions %>
+                    </div>
+                    <div class="text-2xl font-bold text-yellow-400 mb-4">
+                        <%= scorePercentage %>%
+                    </div>
+                    <div class="star-rating justify-center mb-4">
+                        <% for(let i = 1; i <= 5; i++) { %>
+                            <% if(i <= Math.ceil(scorePercentage / 20)) { %>
+                                <span class="star">★</span>
+                            <% } else { %>
+                                <span class="star empty">☆</span>
+                            <% } %>
+                        <% } %>
+                    </div>
+                    <div class="text-xl font-bold text-yellow-400">
+                        <%= performanceRating %> <%= emoji %>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-yellow-400 mb-4 text-center">Your Answers</h3>
+                    <div class="space-y-4">
+                        <% answers.forEach((answer, index) => { %>
+                            <div class="<%= answer.isCorrect ? 'answer-correct' : 'answer-wrong' %> p-4 rounded-lg">
+                                <div class="font-semibold text-white mb-2">
+                                    Question <%= index + 1 %>: <%= answer.question %>
+                                </div>
+                                <div class="text-gray-300">
+                                    <div class="mb-1">
+                                        <span class="font-semibold">Your answer:</span>
+                                        <span class="<%= answer.isCorrect ? 'text-green-400' : 'text-red-400' %>">
+                                            <%= answer.userAnswer %>
+                                        </span>
+                                    </div>
+                                    <% if (!answer.isCorrect) { %>
+                                        <div>
+                                            <span class="font-semibold">Correct answer:</span>
+                                            <span class="text-green-400"><%= answer.correctAnswer %></span>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <a href="/history" class="theater-button px-6 py-3 text-lg font-bold rounded-lg transition-all duration-300">
+                        View History
+                    </a>
+                    <a href="/?fromHistory=true" class="theater-button px-6 py-3 text-lg font-bold rounded-lg transition-all duration-300">
+                        New Quiz
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
